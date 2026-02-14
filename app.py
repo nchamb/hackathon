@@ -185,21 +185,6 @@ if st.session_state.get('show_database', False):
                         risk_emoji = get_risk_emoji(harmful_info['risk_level'])
                         title_display = f"{risk_emoji} {title_display}"
                     
-                # Show all products
-                for product in products[:20]:  # Show first 20
-                    payload = product.payload
-                    
-                    # Extract harmful info
-                    harmful_info = None
-                    if payload.get('groq_analysis'):
-                        harmful_info = extract_harmful_ingredients(payload.get('groq_analysis'))
-                    
-                    # Title with risk indicator
-                    title_display = f"{payload.get('title', 'Unknown')} - {payload.get('store', 'Unknown Store')}"
-                    if harmful_info:
-                        risk_emoji = get_risk_emoji(harmful_info['risk_level'])
-                        title_display = f"{risk_emoji} {title_display}"
-                    
                     with st.expander(title_display):
                         st.write(f"**Store:** {payload.get('store', 'Unknown')}")
                         st.write(f"**URL:** {payload.get('url', 'N/A')}")
