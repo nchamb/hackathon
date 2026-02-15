@@ -4,6 +4,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 import uuid
 from datetime import datetime
+from inngest_monitor import track_qdrant_save, track_qdrant_search
 
 # Initialize Qdrant client (using in-memory for simplicity, can switch to server)
 qdrant_client = QdrantClient(":memory:")  # Use ":memory:" for in-memory or provide URL for server
@@ -110,9 +111,14 @@ def save_product_to_qdrant(product_data):
             points=[point]
         )
         
+        # Track with Inngest
+        track_qdrant_save(product_data.get('title', ''), product_data.get('store', ''), True)
+        
         return True, ingredients
     except Exception as e:
         print(f"Error saving to Qdrant: {e}")
+        # Track error with Inngest
+        track_qdrant_save(product_data.get('title', ''), product_data.get('store', ''), False, error=e)
         return False, str(e)
 
 
@@ -135,9 +141,14 @@ def search_similar_products(query, limit=5):
             limit=limit
         )
         
+        # Track with Inngest
+        track_qdrant_search(query, len(results), True)
+        
         return results
     except Exception as e:
         print(f"Error searching Qdrant: {e}")
+        # Track error with Inngest
+        track_qdrant_search(query, 0, False, error=e)
         return []
 
 

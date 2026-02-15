@@ -1,6 +1,7 @@
 import os
 from groq import Groq
 from dotenv import load_dotenv
+from inngest_monitor import track_groq_analysis, track_groq_comparison, track_groq_qa
 
 load_dotenv()
 
@@ -83,6 +84,9 @@ Be specific about harmful ingredients. If any ingredient has known health risks,
         
         analysis = response.choices[0].message.content
         
+        # Track with Inngest
+        track_groq_analysis(product_title, store, True)
+        
         return {
             "success": True,
             "analysis": analysis,
@@ -90,6 +94,9 @@ Be specific about harmful ingredients. If any ingredient has known health risks,
         }
         
     except Exception as e:
+        # Track error with Inngest
+        track_groq_analysis(product_title, store, False, error=e)
+        
         return {
             "success": False,
             "error": str(e),
@@ -173,6 +180,9 @@ Be objective, evidence-based, and prioritize consumer safety."""
         
         comparison = response.choices[0].message.content
         
+        # Track with Inngest
+        track_groq_comparison(len(products_data), True)
+        
         return {
             "success": True,
             "comparison": comparison,
@@ -180,6 +190,9 @@ Be objective, evidence-based, and prioritize consumer safety."""
         }
         
     except Exception as e:
+        # Track error with Inngest
+        track_groq_comparison(len(products_data), False, error=e)
+        
         return {
             "success": False,
             "error": str(e),
@@ -238,6 +251,9 @@ Please answer based on the product information above. If the information is insu
         
         answer = response.choices[0].message.content
         
+        # Track with Inngest
+        track_groq_qa(question, len(context_products), True)
+        
         return {
             "success": True,
             "answer": answer,
@@ -245,6 +261,9 @@ Please answer based on the product information above. If the information is insu
         }
         
     except Exception as e:
+        # Track error with Inngest
+        track_groq_qa(question, len(context_products), False, error=e)
+        
         return {
             "success": False,
             "error": str(e),
