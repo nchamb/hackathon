@@ -74,10 +74,17 @@ elif st.session_state.step == 2:
     search_query = st.text_input(
         "Enter the item you're looking for:",
         placeholder="e.g., milk",
-        value=st.session_state.search_items
+        value=st.session_state.search_items,
+        on_change=lambda: setattr(st.session_state, 'search_triggered', True) if search_query else None
     )
     
     st.session_state.search_items = search_query
+    
+    # Trigger search on Enter key press
+    search_triggered = getattr(st.session_state, 'search_triggered', False)
+    if search_triggered and search_query:
+        st.session_state.is_searching = True
+        st.session_state.search_triggered = False
     
     col1, col2 = st.columns(2)
     
@@ -186,6 +193,10 @@ if st.session_state.get('show_database', False):
                         title_display = f"{risk_emoji} {title_display}"
                     
                     with st.expander(title_display):
+                        # Show product image if available
+                        if payload.get('image'):
+                            st.image(payload.get('image'), width=200)
+                        
                         st.write(f"**Store:** {payload.get('store', 'Unknown')}")
                         st.write(f"**URL:** {payload.get('url', 'N/A')}")
                         
@@ -212,6 +223,10 @@ if st.session_state.get('show_database', False):
                 for product in products[:20]:  # Show first 20
                     payload = product.payload
                     with st.expander(f"{payload.get('title', 'Unknown')} - {payload.get('store', 'Unknown Store')}"):
+                        # Show product image if available
+                        if payload.get('image'):
+                            st.image(payload.get('image'), width=200)
+                        
                         st.write(f"**Store:** {payload.get('store', 'Unknown')}")
                         st.write(f"**URL:** {payload.get('url', 'N/A')}")
                         
