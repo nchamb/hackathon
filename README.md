@@ -171,7 +171,7 @@ Sophiie senior engineers and CTO. Judging will take place over a 2-week period f
 |-------|-------------|
 | **Project Name** | Product Safety Analyzer |
 | **One-Line Description** | An AI-powered tool that helps consumers make informed decisions about product safety by analyzing ingredients and identifying harmful substances. |
-| **Demo Video Link** | |
+| **Demo Video Link** | https://youtu.be/1KHRLQDkMtA |
 | **Tech Stack** | Streamlit, Tavily API, Groq API, Qdrant, BeautifulSoup4, Requests, Inngest |
 | **AI Provider(s) Used** | Tavily API, Groq API |
 
@@ -204,22 +204,13 @@ streamlit run app.py
 
 <!-- Step-by-step instructions to set up and run your project locally -->
 
-```bash
-# Example:
-# git clone <your-repo>
-# cd <your-project>
-# npm install
-# cp .env.example .env  # add your API keys
-# npm start
-```
-
 #### Architecture / Technical Notes
-Frontend : Streamlit
-Search : Tavily API
-AI Analysis : Groq API with Llama 3.3 70B
-Vector Database : Qdrant (in-memory) with sentence-transformers
-Web Scraping : BeautifulSoup4 + Requests for product images
-Monitoring : Inngest for event tracking and observability
+- **Frontend:** Streamlit
+- **Search:** Tavily API
+- **AI Analysis:** Groq API with Llama 3.3 70B
+- **Vector Database:** Qdrant (in-memory) with sentence-transformers
+- **Web Scraping:** BeautifulSoup4 + Requests for product images
+- **Monitoring:** Inngest for event tracking and observability
 
 <!-- Optional: describe your architecture, key technical decisions, or interesting implementation details -->
 

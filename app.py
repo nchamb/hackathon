@@ -70,21 +70,21 @@ elif st.session_state.step == 2:
     st.title("🛍️ Step 2: What do you want to buy?")
     st.write(f"Searching in: **{', '.join(st.session_state.selected_stores)}**")
     
+    # Callback function for Enter key
+    def trigger_search():
+        if st.session_state.search_input:
+            st.session_state.is_searching = True
+    
     # Text input for single item
     search_query = st.text_input(
         "Enter the item you're looking for:",
         placeholder="e.g., milk",
         value=st.session_state.search_items,
-        on_change=lambda: setattr(st.session_state, 'search_triggered', True) if search_query else None
+        key="search_input",
+        on_change=trigger_search
     )
     
     st.session_state.search_items = search_query
-    
-    # Trigger search on Enter key press
-    search_triggered = getattr(st.session_state, 'search_triggered', False)
-    if search_triggered and search_query:
-        st.session_state.is_searching = True
-        st.session_state.search_triggered = False
     
     col1, col2 = st.columns(2)
     
@@ -96,21 +96,23 @@ elif st.session_state.step == 2:
     with col2:
         if st.button("Search", type="primary", disabled=not search_query):
             st.session_state.is_searching = True
-            
-            # Check if API key is set
-            if not os.getenv("TAVILY_API_KEY"):
-                st.error("⚠️ Tavily API key not found. Please set TAVILY_API_KEY in your .env file.")
-                st.info("Get your free API key at: https://tavily.com")
+    
+    # Handle search execution (from button or Enter key)
+    if st.session_state.is_searching and search_query:
+        # Check if API key is set
+        if not os.getenv("TAVILY_API_KEY"):
+            st.error("⚠️ Tavily API key not found. Please set TAVILY_API_KEY in your .env file.")
+            st.info("Get your free API key at: https://tavily.com")
+            st.session_state.is_searching = False
+        else:
+            with st.spinner("🔍 Searching for products..."):
+                # Call the search agent
+                results = search_products_with_web_search(
+                    search_query,
+                    st.session_state.selected_stores
+                )
+                st.session_state.search_results = results
                 st.session_state.is_searching = False
-            else:
-                with st.spinner("🔍 Searching for products..."):
-                    # Call the search agent
-                    results = search_products_with_web_search(
-                        search_query,
-                        st.session_state.selected_stores
-                    )
-                    st.session_state.search_results = results
-                    st.session_state.is_searching = False
     
     # Display search results
     if st.session_state.search_results:
